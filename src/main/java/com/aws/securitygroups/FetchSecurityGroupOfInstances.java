@@ -18,9 +18,69 @@ import com.amazonaws.util.json.JSONObject;
 
 public class FetchSecurityGroupOfInstances {
 	
+	/*
+	 * Result O/P
+	 * {
+  "SGroupAssociatedToInstance": [
+    {
+      "AssociatedInstances": [
+        "i-1ea55272",
+        "i-e82afb80"
+      ],
+      "RestrictedIPs": [
+        {
+          "IPAdrress": [],
+          "IPProtocol": "tcp",
+          "PortRange": "0..65535"
+        },
+        {
+          "IPAdrress": [],
+          "IPProtocol": "udp",
+          "PortRange": "0..65535"
+        },
+        {
+          "IPAdrress": [],
+          "IPProtocol": "icmp"
+        }
+      ],
+      "SecurityGroupName": "default"
+    },
+    {
+      "AssociatedInstances": "i-1ea55272",
+      "RestrictedIPs": {
+        "IPAdrress": ["0.0.0.0/0"],
+        "IPProtocol": "tcp",
+        "PortRange": "22"
+      },
+      "SecurityGroupName": "quicklaunch-1"
+    }
+  ],
+  "SGroupNonAssociated": {
+    "RestrictedIPs": {
+      "IPAdrress": ["0.0.0.0/0"],
+      "IPProtocol": "tcp",
+      "PortRange": "995"
+    },
+    "SecurityGroupName": "SecurityGrp-2"
+  }
+}
+
+	 */
+	
 	public static void main(String[] args) {
-		FetchSecurityGroupOfInstances obj = new FetchSecurityGroupOfInstances();
-		List<Instance> lsInstances = obj.getLsEC2Instance();
+		FetchSecurityGroupOfInstances obj = new FetchSecurityGroupOfInstances();		
+		try {
+			System.out.println(obj.getJsonOfSGs().toString(2));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+
+
+	private  JSONObject getJsonOfSGs() {		
+		List<Instance> lsInstances = getLsEC2Instance();
 		Map<String,List<Instance>> securityGroupIdentifiers = new HashMap<String,List<Instance>>();
 		for(Instance instance: lsInstances){
 			for(GroupIdentifier groupIdentifier:instance.getSecurityGroups()){
@@ -31,14 +91,10 @@ public class FetchSecurityGroupOfInstances {
 				}
 				sgInstances.add(instance);
 			}
-		}		
-		try {
-			//System.out.println(obj.publishSecurityGroupDetailsAsJSON(securityGroupIdentifiers.keySet()).toString(2));
-			System.out.println("Number of security groups"+securityGroupIdentifiers.size());
-			System.out.println(obj.publishAllSecurityGroupDetailsAsJSONWithInstanceId(securityGroupIdentifiers).toString(2));
-		} catch (JSONException e) {
-			e.printStackTrace();
 		}
+		
+		return publishAllSecurityGroupDetailsAsJSONWithInstanceId(securityGroupIdentifiers);
+		
 	}
 	
 	
