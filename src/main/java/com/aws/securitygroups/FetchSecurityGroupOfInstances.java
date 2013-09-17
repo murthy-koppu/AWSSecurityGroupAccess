@@ -70,7 +70,7 @@ public class FetchSecurityGroupOfInstances {
 	public static void main(String[] args) {
 		FetchSecurityGroupOfInstances obj = new FetchSecurityGroupOfInstances();		
 		try {
-			System.out.println(obj.getJsonOfSGs().toString(2));
+			System.out.println(obj.getJsonOfSGs()==null?"No SecurityGroups present ":obj.getJsonOfSGs().toString(2));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -108,7 +108,7 @@ public class FetchSecurityGroupOfInstances {
 				lsInstances.addAll(reservation.getInstances());
 			}
 		}
-		return lsInstances.isEmpty()?null:lsInstances;
+		return lsInstances;
 	}
 	
 	private JSONObject publishAllSecurityGroupDetailsAsJSONWithInstanceId(Map<String,List<Instance>> groupIdentifiersWithInstances){
@@ -192,33 +192,5 @@ public class FetchSecurityGroupOfInstances {
 		}
 	}
 	
-/*	private void getEC2Instance(){
-		try{
-
-			AmazonEC2 ec2 = new AmazonEC2Client(new ClasspathPropertiesFileCredentialsProvider());
-			Region usWest2 = Region.getRegion(Regions.US_EAST_1);
-			ec2.setRegion(usWest2);
-			
-			DescribeSecurityGroupsRequest securityGroupReq = new DescribeSecurityGroupsRequest();
-			//securityGroupReq.setGroupNames(Arrays.asList(new String[]{"quicklaunch-1"}));
-
-			Filter instanceReqFilter = new Filter();
-			instanceReqFilter.setName("InstanceDesc");
-			instanceReqFilter.setValues(Arrays.asList(new String[]{"LearningInstance"}));
-			securityGroupReq.setFilters(Arrays.asList(new Filter[]{instanceReqFilter}));
-			DescribeSecurityGroupsResult securityGroups = ec2.describeSecurityGroups(securityGroupReq);
-			if(securityGroups != null && securityGroups.getSecurityGroups().size() > 0){
-				SecurityGroup securityGroup = securityGroups.getSecurityGroups().get(0);
-				System.out.println("Securty group name is "+securityGroup.getGroupName()+" "+securityGroup.getIpPermissions().get(0).getFromPort() );
-				System.out.println("Securtiy group tags "+ securityGroup.getTags().get(0).getKey());
-			}
-			
-			
-		
-		}catch(Exception e){
-			e.printStackTrace();
-		}		//ec2.
-	}*/
-
 }
 
